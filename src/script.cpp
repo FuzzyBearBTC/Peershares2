@@ -1211,7 +1211,7 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
         mTemplates.insert(make_pair(TX_PUBKEY, CScript() << OP_PUBKEY << OP_CHECKSIG));
         
         //Empty, provably pruneable, data carring output
-        mTemplates.insert(make_pair(TX_NULLDATA, CScript() << OP_RETURN << OP_SMALLDATA));
+        mTemplates.insert(make_pair(TX_NULL_DATA, CScript() << OP_RETURN << OP_SMALLDATA));
 
         // Bitcoin address tx, sender provides hash of pubkey, receiver provides signature and pubkey
         mTemplates.insert(make_pair(TX_PUBKEYHASH, CScript() << OP_DUP << OP_HASH160 << OP_PUBKEYHASH << OP_EQUALVERIFY << OP_CHECKSIG));
@@ -1374,7 +1374,7 @@ bool Solver(const CKeyStore& keystore, const CScript& scriptPubKey, uint256 hash
     switch (whichTypeRet)
     {
     case TX_NONSTANDARD:
-    case TX_NULL_DATA
+    case TX_NULL_DATA:
         return false;
     case TX_PUBKEY:
         address.SetPubKey(vSolutions[0]);
@@ -1467,6 +1467,7 @@ bool IsMine(const CKeyStore &keystore, const CScript& scriptPubKey)
     switch (whichType)
     {
     case TX_NONSTANDARD:
+    case TX_NULL_DATA:
         return false;
     case TX_PUBKEY:
         address.SetPubKey(vSolutions[0]);
@@ -1501,7 +1502,7 @@ bool ExtractAddress(const CScript& scriptPubKey, CBitcoinAddress& addressRet)
     txnouttype whichType;
     if (!Solver(scriptPubKey, whichType, vSolutions))
         return false;
-    if (typeRet == TX_NULL_DATA)
+    if (whichType == TX_NULL_DATA)
 		return true;
 
     if (whichType == TX_PUBKEY)

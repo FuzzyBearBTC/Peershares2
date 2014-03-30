@@ -310,9 +310,7 @@ bool CTransaction::IsStandard() const
 		}
 		if (whichType == TX_NULL_DATA)
 			nDataOut++;
-		else if (txout.IsDust(CTransaction::nMinRelayTxFee)){
-			return false;
-		}
+		
 		
 		if (nDataOut > 1) {
 			return false;
